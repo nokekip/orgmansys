@@ -23,15 +23,21 @@ class UserManager(BaseUserManager):
 # extend user model from abstract user
 class User(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    username = models.CharField(max_length=150, unique=True, blank=True, null=True)
     first_name = models.CharField(max_length=30, null=False, blank=False)
     last_name = models.CharField(max_length=30, null=False, blank=False)
     email = models.EmailField(max_length=255, unique=True, null=False, blank=False)
-    phone = models.CharField(max_length=15, null=False, blank=False)
+    phone = models.CharField(max_length=15)
 
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name', 'phone']
+
+    def save(self, *args, **kwargs):
+        if not self.username:
+            self.username = str(uuid.uuid4())
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.first_name
