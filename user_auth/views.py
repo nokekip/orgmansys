@@ -19,22 +19,37 @@ class RegisterUserView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-            org_name = f'{user.first_name}\'s organisation'
-            org = Organisation.objects.create(name=org_name)
+            try:
+                org_name = f"{user.first_name}'s Organisation"
+                organisation = Organisation.objects.create(
+                    name=org_name
+                )
+                organisation.users.add(user)
+                organisation.save()
+            except Exception as e:
+                print(f"Error creating organisation: {e}")
+                user.delete()
+                return Response({
+                    "status": "error",
+                    "message": "Registration unsuccessful, could not create organisation",
+                    "errors": str(e)
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
             refresh = RefreshToken.for_user(user)
             return Response({
-                'status': 'success',
-                'message': 'Registration successful',
-                'data': {
-                    'accessToken': str(refresh.access_token),
-                    'user': {
-                        'user_id': user.id,
-                        'first_name': user.first_name,
-                        'last_name': user.last_name,
-                        'email': user.email,
-                        'phone': user.phone,
+                "status": "success",
+                "message": "Registration successful",
+                "data": {
+                    "accessToken": str(refresh.access_token),
+                    "user": {
+                        "userId": str(user.id),
+                        "firstName": user.first_name,
+                        "lastName": user.last_name,
+                        "email": user.email,
+                        "phone": user.phone
                     }
-                },
+                }
             }, status=status.HTTP_201_CREATED)
         return Response({
             'status': 'Bad request',
