@@ -4,7 +4,6 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .models import Organisation
 from .serializers import OrganisationSerializer
-# from user_auth.serializers import UserSerializer
 from rest_framework.views import APIView
 
 
