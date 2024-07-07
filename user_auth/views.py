@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.exceptions import ValidationError
 from .serializers import RegisterUserSerializer, LoginUserSerializer
+from organisation.models import Organisation
 
 
 User = get_user_model()
@@ -18,6 +19,8 @@ class RegisterUserView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
+            org_name = f'{user.first_name}\'s organisation'
+            org = Organisation.objects.create(name=org_name)
             refresh = RefreshToken.for_user(user)
             return Response({
                 'status': 'success',

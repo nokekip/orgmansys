@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from organisation.models import Organisation
 
 User = get_user_model()
 
@@ -21,4 +22,8 @@ class LoginUserSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField()
 
-    
+# # create a user serializer
+# class UserSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = User
+#         fields = ['first_name', 'last_name', 'email', 'phone']
