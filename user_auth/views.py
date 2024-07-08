@@ -94,3 +94,23 @@ class LoginUserView(generics.GenericAPIView):
             'message': 'Login unsuccessful',
             'statusCode': '400'
         }, status=status.HTTP_401_UNAUTHORIZED)
+
+
+class APIListView(APIView):
+    """
+    View to list all registered API endpoints.
+    """
+    def get(self, request, *args, **kwargs):
+        endpoints = [
+            {'url': '/api/user/<str:pk>/', 'name': 'user-detail'},
+            {'url': '/api/organisations/', 'name': 'organisations_list'},
+            {'url': '/api/organisations/<str:pk>/', 'name': 'organisation_details'},
+            {'url': '/api/organisations/<str:pk>/users/', 'name': 'organisation_add_user'},
+            {'url': '/auth/register/', 'name': 'register'},
+            {'url': '/auth/login/', 'name': 'login'},
+        ]
+        
+        return Response({
+            'message': 'List of available API endpoints',
+            'endpoints': endpoints
+        })
